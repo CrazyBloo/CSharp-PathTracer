@@ -22,9 +22,14 @@ public class Program
     static Vector3 LowerLeftCorner = Origin - Horizontal / 2 - Vertical / 2 - new Vector3(0, 0, FocalLength);
 
     public static string ImageBuffer = "P3\n" + ImageWidth + ' ' + ImageHeight + "\n255\n";
-    
+
+    public static List<Hittable> Hittables = new();
     static void Main()
     {
+        //Populate scene with objects
+        Hittables.Add(new Sphere(new Vector3(0, 0, -1), 0.5f));
+        Hittables.Add(new Sphere(new Vector3(0, -100.5f, -1), 100));
+        
         //for every pixel in the image, calculate
         for (int j = ImageHeight - 1; j >= 0; --j)
         {
@@ -44,7 +49,7 @@ public class Program
 
         var ray = new Ray(Origin, LowerLeftCorner + u * Horizontal + v * Vertical - Origin);
 
-        Vector3 pixel_color = Ray.RayColor(ray);
+        Vector3 pixel_color = Ray.RayColor(ray, Hittables);
 
         WriteColor(pixel_color);
 
@@ -73,5 +78,11 @@ public class Program
     {
         return vec / vec.Length();
     }
+    
+    public static float DegreesToRadians(float deg)
+    {
+        return deg * MathF.PI * 180;
+    }
+
 
 }
