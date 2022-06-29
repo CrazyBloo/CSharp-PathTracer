@@ -30,7 +30,6 @@ public class Ray
         if (hit != null)
         {
             hit.Hit(ray, 0, float.PositiveInfinity, ref rec);
-            Console.WriteLine(rec.Normal);
             return 0.5f * (rec.Normal + new Vector3(1, 1, 1));
         }
 

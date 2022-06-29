@@ -9,21 +9,14 @@ public class Program
     static float AspectRatio = 16.0f / 9.0f;
     static int ImageWidth = 400;
     static int ImageHeight = (int)(ImageWidth / AspectRatio);
-
-    //Viewport Setup
-    static float ViewportHeight = 2.0f;
-    static float ViewportWidth = AspectRatio * ViewportHeight;
-    static float FocalLength = 1.0f;
-    
-    //Viewport Transforms
-    static Vector3 Origin = new Vector3(0, 0, 0);
-    static Vector3 Horizontal = new Vector3(ViewportWidth, 0, 0);
-    static Vector3 Vertical = new Vector3(0, ViewportHeight, 0);
-    static Vector3 LowerLeftCorner = Origin - Horizontal / 2 - Vertical / 2 - new Vector3(0, 0, FocalLength);
+    static int SamplesPerPixel = 100;
 
     public static string ImageBuffer = "P3\n" + ImageWidth + ' ' + ImageHeight + "\n255\n";
 
     public static List<Hittable> Hittables = new();
+
+    public static Camera Camera = new();
+
     static void Main()
     {
         //Populate scene with objects
@@ -44,17 +37,20 @@ public class Program
 
     public static void CalcColor(float i, float j)
     {
-        float u = (float)i / ((float)ImageWidth - 1f);
-        float v = (float)j / ((float)ImageHeight - 1f);
 
-        var ray = new Ray(Origin, LowerLeftCorner + u * Horizontal + v * Vertical - Origin);
-
-        Vector3 pixel_color = Ray.RayColor(ray, Hittables);
+        Vector3 pixel_color = new(0, 0, 0);
+        var rand = new Random();
+        for (int s = 0; s < SamplesPerPixel; ++s)
+        {
+            float u = ((float)i + (float)rand.NextDouble()) / ((float)ImageWidth - 1f);
+            float v = ((float)j + (float)rand.NextDouble()) / ((float)ImageHeight - 1f);
+            Ray ray = Camera.GetRay(u, v);
+            pixel_color += Ray.RayColor(ray, Hittables);
+        }
 
         WriteColor(pixel_color);
 
         float percent = j / (float)ImageHeight;
-
         Console.WriteLine($"Drawing new pixel {i}, {j}, {percent * 100}% remaining");
 
     }
@@ -62,10 +58,20 @@ public class Program
 
     static void WriteColor(Vector3 color)
     {
-        //convert the color from 0.0 to 1.0 to 0 to 255
-        int x = (int)(255 * color.X);
-        int y = (int)(255 * color.Y);
-        int z = (int)(255 * color.Z);
+        var r = color.X;
+        var g = color.Y;
+        var b = color.Z;
+
+        // Divide the color by the number of samples.
+        var scale = 1.0f / SamplesPerPixel;
+        r *= scale;
+        g *= scale;
+        b *= scale;
+
+        var x = (int)(256 * Math.Clamp(r, 0.0f, 0.999f));
+        var y = (int)(256 * Math.Clamp(g, 0.0f, 0.999f));
+        var z = (int)(256 * Math.Clamp(b, 0.0f, 0.999f));
+
 
         //append to end of string in ppm format
         ImageBuffer = ImageBuffer + x + ' ' + y + ' ' + z + '\n';
