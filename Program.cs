@@ -21,9 +21,17 @@ public class Program
 
     static void Main()
     {
+        var GroundMaterial = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
+        var CenterSphereMat = new Lambertian(new Vector3(0.7f, 0.3f, 0.3f));
+        var LeftSpehereMat = new Metal(new Vector3(0.8f, 0.8f, 0.8f));
+        var RightSphereMat = new Metal(new Vector3(0.8f, 0.6f, 0.2f));
+
+
         //Populate scene with objects
-        Hittables.Add(new Sphere(new Vector3(0, 0, -1), 0.5f));
-        Hittables.Add(new Sphere(new Vector3(0, -100.5f, -1), 100));
+        Hittables.Add(new Sphere(new Vector3(0, 0, -1), 0.5f, CenterSphereMat));
+        Hittables.Add(new Sphere(new Vector3(-1, 0, -1), 0.5f, LeftSpehereMat));
+        Hittables.Add(new Sphere(new Vector3(1, 0, -1), 0.5f, RightSphereMat));
+        Hittables.Add(new Sphere(new Vector3(0, -100.5f, -1), 100, GroundMaterial));
 
 
 
@@ -136,4 +144,11 @@ public class Program
         return UnitVector(RandomUnitInSphere());
     }
     
+    public static bool NearZero(Vector3 vec)
+    {
+        // Return true if the vector is close to zero in all dimensions.
+        var s = 1e-8;
+        return (MathF.Abs(vec.X) < s) && (MathF.Abs(vec.Y) < s) && (MathF.Abs(vec.Z) < s);
+    }
+
 }

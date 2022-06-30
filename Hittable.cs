@@ -11,7 +11,7 @@ public struct HitRecord
     public Vector3 P;
     public Vector3 Normal;
     public bool FrontFace;
-
+    public Material Material;
     
 
     public void SetFaceNormal(Ray ray, Vector3 outwardnormal) {
@@ -29,7 +29,7 @@ public class Hittable
         return false;
     }
 
-    public static Hittable HitWorld(Ray ray, float tMin, float tMax, HitRecord rec, List<Hittable> Hittables)
+    public static Hittable HitWorld(Ray ray, float tMin, float tMax, ref HitRecord rec, List<Hittable> Hittables)
     {
         HitRecord temprec = new HitRecord();
         var closest_so_far = tMax;

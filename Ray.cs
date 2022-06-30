@@ -28,13 +28,19 @@ public class Ray
         if (depth <= 0)
             return new Vector3(0, 0, 0);
 
-        var hit = Hittable.HitWorld(ray, 0.001f, float.PositiveInfinity, rec, world);
-
+        var hit = Hittable.HitWorld(ray, 0.001f, float.PositiveInfinity, ref rec, world);
+        
         if (hit != null)
         {
-            hit.Hit(ray, 0.001f, float.PositiveInfinity, ref rec);
-            Vector3 target = rec.P + rec.Normal + Program.RandomUnitVector();
-            return 0.5f * RayColor(new Ray(rec.P, target - rec.P), world, depth - 1);
+            //Vector3 target = rec.P + rec.Normal + Program.RandomUnitVector();
+            //return 0.5f * RayColor(new Ray(rec.P, target - rec.P), world, depth - 1);
+            
+            Ray scattered = new Ray(Vector3.Zero, Vector3.Zero);
+            Vector3 attenuation = new Vector3();
+            if (rec.Material.Scatter(ray, rec, ref attenuation, ref scattered))
+                return attenuation * RayColor(scattered, world, depth - 1);
+            return new Vector3(0, 0, 0);
+
         }
 
 
