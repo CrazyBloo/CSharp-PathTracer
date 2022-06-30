@@ -21,16 +21,20 @@ public class Ray
         return Origin + t * Direction;
     }
 
-    public static Vector3 RayColor(Ray ray, List<Hittable> world)
+    public static Vector3 RayColor(Ray ray, List<Hittable> world, int depth)
     {
         HitRecord rec = new();
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if (depth <= 0)
+            return new Vector3(0, 0, 0);
 
-        var hit = Hittable.HitWorld(ray, 0, float.PositiveInfinity, rec, world);
+        var hit = Hittable.HitWorld(ray, 0.001f, float.PositiveInfinity, rec, world);
 
         if (hit != null)
         {
-            hit.Hit(ray, 0, float.PositiveInfinity, ref rec);
-            return 0.5f * (rec.Normal + new Vector3(1, 1, 1));
+            hit.Hit(ray, 0.001f, float.PositiveInfinity, ref rec);
+            Vector3 target = rec.P + rec.Normal + Program.RandomUnitVector();
+            return 0.5f * RayColor(new Ray(rec.P, target - rec.P), world, depth - 1);
         }
 
 
