@@ -23,8 +23,8 @@ public class Program
     {
         var GroundMaterial = new Lambertian(new Vector3(0.8f, 0.8f, 0.0f));
         var CenterSphereMat = new Lambertian(new Vector3(0.7f, 0.3f, 0.3f));
-        var LeftSpehereMat = new Metal(new Vector3(0.8f, 0.8f, 0.8f));
-        var RightSphereMat = new Metal(new Vector3(0.8f, 0.6f, 0.2f));
+        var LeftSpehereMat = new Metal(new Vector3(0.8f, 0.8f, 0.8f), 0f);
+        var RightSphereMat = new Metal(new Vector3(0.8f, 0.6f, 0.2f), 0.43f);
 
 
         //Populate scene with objects
@@ -32,9 +32,6 @@ public class Program
         Hittables.Add(new Sphere(new Vector3(-1, 0, -1), 0.5f, LeftSpehereMat));
         Hittables.Add(new Sphere(new Vector3(1, 0, -1), 0.5f, RightSphereMat));
         Hittables.Add(new Sphere(new Vector3(0, -100.5f, -1), 100, GroundMaterial));
-
-
-
 
         //for every pixel in the image, calculate
         for (int j = ImageHeight - 1; j >= 0; --j)
